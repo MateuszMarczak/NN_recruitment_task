@@ -1,5 +1,5 @@
 package pl.marczak.nn.dto;
 
-public record CreatedAccountDto(String uuid) {
+public record CreatedAccountResponseDto(String uuid) {
 
 }

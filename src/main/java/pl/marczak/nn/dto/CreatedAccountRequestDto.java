@@ -1,5 +1,9 @@
 package pl.marczak.nn.dto;
 
-public record CreeatedAccountRequestDto(String name, String surname) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+
+public record CreatedAccountRequestDto(@NotBlank String name, @NotBlank String surname, @Positive BigDecimal balance) {
 
 }

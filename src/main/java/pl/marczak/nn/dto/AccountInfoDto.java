@@ -1,4 +1,4 @@
-package pl.marczak.nn.controller;
+package pl.marczak.nn.dto;
 
 import java.math.BigDecimal;
 

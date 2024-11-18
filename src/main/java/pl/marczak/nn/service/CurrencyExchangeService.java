@@ -1,5 +1,8 @@
 package pl.marczak.nn.service;
 
-public interface ExchangeService {
+import pl.marczak.nn.dto.ExchangeRequestDto;
 
+public interface CurrencyExchangeService {
+
+  void exchange(ExchangeRequestDto request);
 }
