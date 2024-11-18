@@ -32,14 +32,27 @@ public class Balance {
   @JoinColumn(name = "account_id")
   private Account account;
 
-  public static Balance of(Currency currency, BigDecimal amount) {
+  public static Balance of(Currency currency, BigDecimal amount, Account account) {
     return Balance.builder()
         .currency(currency)
         .amount(amount)
+        .account(account)
         .build();
   }
 
   public void update(BigDecimal updatedBalance) {
     this.amount = updatedBalance;
+  }
+
+
+  void sell(BigDecimal amount) {
+    if (this.amount.compareTo(amount) < 0) {
+      throw new IllegalStateException("Not enough money to sell");
+    }
+    this.amount = this.amount.subtract(amount);
+  }
+
+  void buy(BigDecimal amount) {
+    this.amount = this.amount.add(amount);
   }
 }

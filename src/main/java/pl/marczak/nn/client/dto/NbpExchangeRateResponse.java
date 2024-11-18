@@ -1,6 +1,7 @@
 package pl.marczak.nn.client.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public record NbpExchangeRateResponse(
@@ -9,12 +10,10 @@ public record NbpExchangeRateResponse(
     String code,
     List<Rate> rates
 ) {
-
-  public record Rate(
+  public static record Rate(
       String no,
-      String effectiveDate,
-      BigDecimal mid
-  ) {
-
-  }
+      LocalDate effectiveDate,
+      BigDecimal bid,
+      BigDecimal ask
+  ) {}
 }

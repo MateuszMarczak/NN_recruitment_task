@@ -31,28 +31,33 @@ public class Account {
   private String uuid;
   private String name;
   private String surname;
-  @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<Balance> balances;
 
 
   public static Account from(CreatedAccountRequestDto source) {
-    initialPlnBalance(source);
 
-    return Account.builder()
+    Account account = Account.builder()
         .uuid(UUID.randomUUID().toString())
         .name(source.name())
         .surname(source.surname())
-        .balances(initialPlnBalance(source))
         .build();
+
+    account.balances = new ArrayList<>();
+    account.balances.add(initialPlnBalance(source, account));
+    account.balances.add(initialUSDBalance(source, account));
+
+    return account;
   }
 
-  private static List<Balance> initialPlnBalance(CreatedAccountRequestDto source) {
-    Balance balance = Balance.of(Currency.PLN, source.balance());
-
-    List<Balance> balances = new ArrayList<>();
-    balances.add(balance);
-    return balances;
+  private static Balance initialUSDBalance(CreatedAccountRequestDto source, Account account) {
+    return Balance.of(Currency.USD, BigDecimal.ZERO, account);
   }
+
+  private static Balance initialPlnBalance(CreatedAccountRequestDto source, Account account) {
+    return Balance.of(Currency.PLN, source.balance(), account);
+  }
+
 
   public BigDecimal getCurrencyBalance(Currency lookingCurrency) {
     return balances.stream()
@@ -61,5 +66,21 @@ public class Account {
         .map(Balance::getAmount)
         .orElse(BigDecimal.ZERO);
   }
+
+  public void sellCurrency(Currency currency, BigDecimal amount) {
+    balances.stream()
+        .filter(balance -> currency.equals(balance.getCurrency()))
+        .findFirst()
+        .ifPresent(balance -> balance.sell(amount));
+
+  }
+
+  public void buyCurrency(Currency currency, BigDecimal amount) {
+    balances.stream()
+        .filter(balance -> currency.equals(balance.getCurrency()))
+        .findFirst()
+        .ifPresent(balance -> balance.buy(amount));
+  }
+
 
 }
